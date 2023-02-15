@@ -10,7 +10,7 @@ class Node:
 		self.rank = rank
 class Server:
 	def __init__(self):
-		self.clients[]
+		self.clients = []
 		self.N = 20
 		self.DISCONNECT = "DISCONNECT"
 		self.HEADER = 64
@@ -35,16 +35,16 @@ class Server:
 			n = Node(conn,addr,rank)
 			clients.append(n)
 			conn.send(f"Assigned rank: {rank}".encode())
-			thread = threading.thead(target=self.handle, args(n,))
+			thread = threading.Thread(target=self.handle_clients, args=(n,))
 			print(conn, addr)
 
 			pass
 
 	def broadcast(self, message, sender):
-        for client in self.clients:
-            if client != sender:
-                client.conn.send(message)
-    '''
+		for client in self.clients:
+			if client != sender:
+				client.conn.send(message)
+				'''
     def handle(self, client):
         while True:
         	data = client.conn.recv(1024)
