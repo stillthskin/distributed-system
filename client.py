@@ -1,28 +1,24 @@
 #!/usr/bin/env python3
 import socket
-import os
-class Client:
-	def __init__(self, rank):
-		self.rendezvous = ('127.0.1.1',5050)
-		self.clientip = socket.gethostbyname(socket.gethostname())
-		self.port = 5000
-		self.ADDR = (self.clientip,self.port)
-		self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		self.client.bind(self.ADDR)
-		self.FORMAT = 'utf-8'
-		#self.client.sendto(b'0', self.rendezvous)
-		self.client.sendto(b'0', self.rendezvous)
-		#print(dir(os))
 
+class client:
+	def __init__(self):
+		#print(dir(socket))
+		serverip = socket.gethostbyname(socket.gethostname())
+		port = 5050
+		SIZE = 64
+		rank = 1
+		client = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+		client.bind((serverip,port))
+		client.connect((serverip,port))
+		command = input("Please enter command to be sent: ")
+		command = command.encode("utf-8")
+		command_len = str(len(command)).encode("utf-8")
+		command_len += b' ' *(SIZE - len(command))
+		client.send(command_len)
+		client.send(f"{rank};command".encode("utf-8"))
+		client.send("hello world".encode("utf-8"))
+		client.listen()
 		
 
-	def initiate_com(self):
-		command = input('Type command to be broadcast: ')
-		while True:
-			self.client.sendto(command.encode(self.FORMAT),(self.rendezvous))
-			pass
-
-
-
-c = Client(1)
-print(c.clientip)
+c = client()

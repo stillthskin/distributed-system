@@ -1,5 +1,5 @@
-#P2P Client Server
-This repository contains simple client-server scripts written in Python. The client script can send requests to the server and receive responses, while the server script listens for incoming requests and sends back responses.
+#A distributed system.
+This repository contains simple client-server scripts written in Python. The client script can send commands to be broadcast over the network and check ranks of the sending nodes if lower or higer and only excecutes the hiher ranked, while the server script listens for incoming requests and sends back responses and broadcasts the command to all other nodes of the nerwork.
 
 ##Prerequisites
 
@@ -11,21 +11,20 @@ This repository contains simple client-server scripts written in Python. The cli
 
 ##shell
 
-$ git clone https://github.com/<username>/python-client-server-scripts.git
+$ git clone https://github.com/stilshskin/distributedsystem.git
 
     Run the server script in a terminal window.
 
-ruby
 
-$ python server.py
+$ python3 server.py
 
     Run the client script in another terminal window.
 
-ruby
 
-$ python client.py
 
-    Type a message in the client terminal window and press Enter. The message will be sent to the server, which will process it and send back a response.
+$ python3 client.py
+
+    Type a command in the client terminal window and press Enter. The message will be sent to the server, which will process it and send back a response.
 
 ###Contributions
 

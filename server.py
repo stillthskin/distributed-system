@@ -3,67 +3,54 @@
 
 import socket
 import threading
-class Node:
-	def __init__(self, conn, addr,rank):
+
+class clientNode:
+	def __init__(self,conn,data,rank):
 		self.conn = conn
-		self.addr = addr
+		self.data = data
 		self.rank = rank
-class Server:
+
+class server:
 	def __init__(self):
-		self.clients = []
-		self.N = 20
-		self.DISCONNECT = "DISCONNECT"
-		self.HEADER = 64
-		SERVER = socket.gethostbyname(socket.gethostname())
-		print(socket.gethostbyname(socket.gethostname()))
-		PORT = 5050
-		self.ADDR = (SERVER, PORT)
-		self.FORMAT = 'utf-8'
-		self.addr = " "
-		self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		self.lock = threading.Lock()
-	def handle_clients(self):
-		pass
-	def start_server(self):
-		self.server.bind(self.ADDR)
-		self.server.listen()
-		print('server running...')
+		self.SIZE = 1024
+		self.nodes = []
+		#print(dir(socket))
+		serverip = socket.gethostbyname(socket.gethostname())
+		port = 5050
+		server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+		server.bind((serverip,port))
+		print(f"Server Running on {serverip}...")
+		server.listen()
 		while True:
-			conn, addr = self.server.accept()
-			print('Connection received')
-			rank = len(clients)
-			n = Node(conn,addr,rank)
-			clients.append(n)
+			conn,data = server.accept()
+			rank = len(self.nodes) + 1
+			n = clientNode(conn,data,rank)
+			self.nodes.append(n)
 			conn.send(f"Assigned rank: {rank}".encode())
-			thread = threading.Thread(target=self.handle_clients, args=(n,))
-			print(conn, addr)
-
-			pass
-
+			thread = threading.Thread(target=self.handle_client, args=(n,))
+			thread.start()
+	
 	def broadcast(self, message, sender):
 		for client in self.clients:
 			if client != sender:
 				client.conn.send(message)
-				'''
-    def handle(self, client):
-        while True:
-        	data = client.conn.recv(1024)
-        	command = data.decode().strip()
-            if int(command.split(":")[0]) > client.rank:
-               client.conn.send("Rejected: rank is higher".encode())
-            else:
-            	message = f"Executed: {command}"
-                self.broadcast(message.encode(), client)
+	
+	def handle_client(self,client):
+		connection =True
+		while connection:
+			msg = client.conn.recv(self.SIZE).decode("utf-8")
+			if msg:
+				msg_len = int(msg)
+				msg = client.conn.recv(msg_len).decode("utf-8")
+				command = msg.decode("utf-8").strip()
+				if int(command.split(":")[0]) > client.rank:
+					client.conn.send("Cannot Excecute Rank Lower: ".encode("utf-8"))
+				else:
+					message = f"Executed: {command}"
+					self.broadcast(message.encode(), client)
+				if msg == "DISCONNECT":
+					connection = False
+		client.conn.close()
+		
 
-        client.conn.close()
-        self.clients.remove(client)
-        self.broadcast(f"{client.addr} disconnected".encode(), client)
-        with self.lock:
-            for i in range(client.rank+1, N):
-                self.clients[i].rank -= 1
-    '''
-
-s = Server()
-s.start_server()
-
-#print(prompts)
+s = server()
