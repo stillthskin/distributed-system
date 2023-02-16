@@ -11,7 +11,7 @@ This repository contains simple client-server scripts written in Python. The cli
 
 ##shell
 
-$ git clone https://github.com/stilshskin/distributedsystem.git
+$ git clone https://github.com/stillthskin/distributed-system.git
 
     Run the server script in a terminal window.
 
