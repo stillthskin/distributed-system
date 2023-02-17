@@ -26,7 +26,7 @@ class server:
 			rank = len(self.nodes) + 1
 			n = clientNode(conn,data,rank)
 			self.nodes.append(n)
-			conn.send(f"Assigned rank: {rank}".encode())
+			conn.send(f"Assigned rank: ;{rank}".encode("utf-8"))
 			thread = threading.Thread(target=self.handle_client, args=(n,))
 			thread.start()
 	
@@ -43,7 +43,7 @@ class server:
 				msg_len = int(msg)
 				msg = client.conn.recv(msg_len).decode("utf-8")
 				command = msg.decode("utf-8").strip()
-				if int(command.split(":")[0]) > client.rank:
+				if int(command.split(";")[0]) > client.rank:
 					client.conn.send("Cannot Excecute Rank Lower: ".encode("utf-8"))
 				else:
 					message = f"Executed: {command}"
